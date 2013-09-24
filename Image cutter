@@ -1,0 +1,18 @@
+require 'rubygems'
+require 'RMagick'
+include Magick
+img_path,height,weight=ARGV
+
+image=Image.read(img_path).first
+face=image.crop(CenterGravity,height.to_i,weight.to_i)
+face.write(img_path)
+....................................................................
+require 'rubygems'
+require 'RMagick'
+include Magick
+img_path,scale=ARGV
+
+image=Image.read(img_path).first
+
+image.scale(scale.to_f)
+image.display
