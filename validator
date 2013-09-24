@@ -1,0 +1,88 @@
+module PresenceValidator
+#validating name
+    def validates_presence_of()
+        if(name==nil or name=='')
+         @flag=1
+         return false
+        elsif name.length<=2 or name.length>=10
+         @flag=2
+         return false
+        elsif (((name=~ /[0-9]/)==nil and !(name=~ /[0-9]/))or !(name=~ /[a-zA-Z]/))  
+          @flag=3
+          return false
+        else 
+         return true
+         end
+      end
+#validating type
+       @@dog_type=["Alsatian", "Doberman", "Stray"]
+      def validates_inclusion()
+        if (@@dog_type.include?(@type))
+         return true
+         else
+            @flag=4
+            return false
+            end
+       end
+#validating numericality    
+      def validates_numericality()
+            if ((@age.class==Float or @age.class==String)or @age<=0)  
+            @flag=5
+            return false
+            else
+            return true
+        end
+      end
+   end   
+
+class Dog
+  include PresenceValidator
+   attr_accessor :name
+   attr_accessor :type
+   attr_accessor :age
+   @flag
+        
+#validating values
+     def valid?
+       if ((validates_presence_of() and validates_inclusion()) and validates_numericality())
+       puts true
+       else
+        puts false 
+        end
+       end
+#displaying errors
+     def errors
+       if   @flag==1
+       puts "name should not be empty or nil"
+       elsif @flag==2
+       puts "name should be atleast 3 and atmost 10 characters"
+       elsif @flag==3
+       puts "name should contain atleast one number one character"
+       elsif @flag==4
+       puts "Type doesn't match"
+       elsif @flag==5
+       puts "Age should be numaric and positive" 
+       else
+       puts "No errors"
+       end
+     end
+end
+#initializing class with some values  
+d = Dog.new
+d.name="Tom1"
+d.type="Doberman"
+d.age=21
+d.valid? 
+d.errors 
+puts".........................\n"
+d.name="tomy1"
+d.type="Dober"
+d.age=21
+d.valid? 
+d.errors 
+puts".........................\n"
+d.name="TOMY1"
+d.type="Doberman"
+d.age="21j"
+d.valid? 
+d.errors 
