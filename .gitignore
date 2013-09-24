@@ -1,18 +1,95 @@
-*.gem
-*.rbc
-.bundle
-.config
-coverage
-InstalledFiles
-lib/bundler/man
-pkg
-rdoc
-spec/reports
-test/tmp
-test/version_tmp
-tmp
-
-# YARD artifacts
-.yardoc
-_yardoc
-doc/
+class Note
+#adding notes
+def add_note(name,value)
+File.open("NOTE_FILE", 'a+') do |f|
+    f.write "#{name}|#{value}\n"
+  end
+ end
+#search note based on name not value
+def search_note(name)
+   search_term = name.chomp
+   read=IO.readlines("NOTE_FILE")
+   read.each do |line|
+   fields=line.split("|")
+   if fields[0]==search_term
+   puts fields.join("|")
+    elsif
+        fields[0].include?(search_term)
+        puts fields.join("|")
+        else
+     end
+   end
+ end 
+def del_note(name)
+    search_term = name.chomp
+    read=IO.readlines("NOTE_FILE")
+    read.each do |line|
+    fields=line.split("|")
+   if fields[0]==search_term
+    return fields
+    end
+    end 
+    end 
+def read_notes
+   notes=[]
+   open("NOTE_FILE","r").each{|line| notes << line}
+  notes
+end
+#rewriting values to file after deleting one line
+def save_notes(notes)
+  File.open("NOTE_FILE", 'w') do |f|
+    notes.each do |note|
+      f.write "#{note}"
+    end
+  end
+end
+#delete note based on value or name 
+def delete_note(value)
+  id=del_note(value)
+  a="#{id[0]}"+"|"+"#{id[1]}"
+  all_notes= read_notes
+  all_notes.delete("#{a}")
+  save_notes(all_notes)
+end
+#show all notes 
+def view_notes()
+open('NOTE_FILE', 'r').each { |l| puts "#{l}\n"}
+end
+#search based on name or value
+def search1_note(name)
+flag=0
+read=IO.readlines("NOTE_FILE")
+    read.each do |l|
+     if l.include?(name)
+      puts l
+      flag=1 
+      end
+   end
+    puts "no note found" if flag==0     
+   end 
+#multiline line note    
+def multi_note(name) 
+     val=[]
+     val << $stdin.read
+     val1=val.join.gsub("\n"," ")
+     add_note(name,val1)
+   end 
+end
+ 
+#control starts from hear 
+name,value=ARGV
+n=Note.new
+if name=="-s"
+n.search_note(value)
+elsif name=="-d"
+n.delete_note(value)
+elsif name==nil
+n.view_notes()
+elsif name=="-q"
+n.search1_note(value)
+elsif name=="-m"
+n.multi_note(value)
+elsif
+n.add_note(name,value)
+else
+end
