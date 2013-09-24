@@ -1,0 +1,61 @@
+#Generating .html files
+#open file,getting place holders data.  
+def generator(file_name)
+values=[]
+dir_files="data/"+"#{file_name}"
+generated_file="#{file_name}"+".html"
+
+file_lines=IO.readlines("#{dir_files}")
+   character ="---"
+   #finding limit of the character (...) for getting content
+   for i in 0..(file_lines.length - 1)
+   limit=i if (file_lines[i].include?("#{character}"))
+  end
+file_lines[0..limit].each { |line| 
+values << line.chomp.split("=")
+}
+content=delete_lines(limit,file_lines)
+values << ["Content",content]
+club_values(values,generated_file)
+end
+
+#clubing values with layout file
+def club_values(values,generated_file)
+file=File.open("#{generated_file}","w")
+val=values.length
+open('layout.html', 'r').each { |line|
+     values.each { |l|
+      for i in 0..val do
+        line="#{line}".gsub("{{#{l[i]}}}","#{l[i+1]}")
+         end
+         }   
+   file.write("#{line}")
+   }
+file.close
+end
+
+#deleting lines upto limit 
+def delete_lines(i,lines)
+while i>0
+lines.delete_at(0)
+i-=1
+ end
+ lines.join()
+end
+#finding name of files in specific folder  
+all_file_names=Dir.entries("data")
+all_file_names.each do |file|
+generator(file) if (file!="." and file!="..")
+end
+
+
+
+
+
+
+
+
+
+
+
+
