@@ -1,0 +1,129 @@
+class Note
+def add_note(name,value)    #adding notes
+      flag=validate_name(name)
+      delete_note(name) if flag==false
+      File.open("NOTE_FILE", 'a+') do |f|
+      f.write "#{name}|#{value}\n"
+      end
+  end
+
+def validate_name(name)  
+   search_term = name.chomp
+   read=view_notes()
+   read.each do |line|
+   fields=line.split("|")
+   return false if fields[0]==search_term
+    end
+    return true
+    end
+@@lines=[]                    
+def validate_search(name)  
+   search_term = name.chomp
+   read=view_notes()
+   read.each do |line|
+   fields=line.split("|")
+   if fields[0]==search_term
+   @@lines << line
+   elsif fields[0].downcase.include?(name.downcase)
+       @@lines << line
+      end 
+      end
+      end 
+
+def search_note(name)        #search note based on name not value
+    validate_search(name)
+    print_note(@@lines) 
+    puts "no such records" if @@lines.empty?
+    end
+def print_bar
+    puts "==========="
+end
+   
+def del_note(name)
+    search_term = name.chomp
+    read=view_notes()
+    read.each do |line|
+    fields=line.split("|")
+    if fields[0]==search_term
+    @@lines << line
+    print_note(@@lines) 
+    return fields
+    end
+    end 
+    end 
+    
+
+def save_notes(notes)                #rewriting values to file after deleting one line
+  File.open("NOTE_FILE", 'w') do |f|
+    notes.each do |note|
+      f.write "#{note}"
+    end
+    end
+    end
+
+def delete_note(value)              #delete note based on value or name 
+    id=del_note(value)
+    a="#{id[0]}"+"|"+"#{id[1]}"
+    all_notes= view_notes()
+    all_notes.delete("#{a}")
+    save_notes(all_notes)
+    end
+
+def view_notes()                    #show all notes 
+   #print_bar
+   lines=[]
+   open('NOTE_FILE', 'r').each { |l| lines << l}
+   lines
+   end
+
+def qsearch_note(name)               #search based on name or value
+  flag=0
+  read=view_notes()
+    read.each do |l|
+     if l.downcase.include?(name.downcase)
+      @@lines << l
+      flag=1 
+      end
+   end
+    print_note(@@lines)
+    puts "no note found" if flag==0     
+   end 
+
+def multi_note(name)                  #multiline line note     
+     val=[]
+     val << $stdin.read
+     val1=val.join.gsub("\n"," ")
+     add_note(name,val1)
+     end 
+     end
+     
+def print_note(notes)
+    notes.each do |line|
+    fields=line.split("|")
+    puts "Name: #{fields[0]}"
+    puts "Value: #{fields[1]}"
+    puts "..................." 
+end
+end
+ 
+
+name=ARGV[0]                        #control starts from hear 
+value=ARGV[1..-1]
+n=Note.new
+if name=="-s"
+n.search_note(value.join(" "))
+elsif name=="-d"
+n.delete_note(value.join(" "))
+elsif name==nil
+print_note(n.view_notes())
+n.print_bar
+elsif name=="-q"
+n.qsearch_note(value.join(" "))
+elsif name=="-m"
+n.multi_note(value.join(" "))
+elsif
+n.add_note(name,value.join(" "))
+else
+puts "you entered wrongly"
+end
+                      
